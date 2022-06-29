@@ -86,6 +86,39 @@ app.post("/login", async (req,res) => {
 
 });
 
+app.post("/entradas", async (req, res) => {
+    const { authorization } = req.headers;
+    const { value, description } = req.body;
+    const token = authorization?.replace("Bearer ", "");
+
+    const entradasSchema = joi.object({
+        value: joi.number().required(),
+        description: joi.string().required()
+    });
+
+    const validacao = entradasSchema.validate( { value, description }, { abortEarly: false });
+
+    if(validacao.error) {
+        return res.sendStatus(422);
+    }
+
+    try {
+        const sessao = await db.collection("sessoes").findOne({ token });
+
+        if(!sessao) {
+            return res.sendStatus(401);
+        }
+
+        const transacoes = await db.collection("transacoes").insertOne({
+            value,
+            description,
+            userId: sessao.userId
+        });
+        res.sendStatus(201);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+});
 
 app.listen(5000, () => console.log("Servidor rodando!"));
 
