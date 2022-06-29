@@ -120,5 +120,23 @@ app.post("/entradas", async (req, res) => {
     }
 });
 
+app.get("/transacoes", async (req,res) => {
+    const { authorization } = req.headers;
+    const token = authorization?.replace("Bearer ", "");
+
+    try {
+        const sessao = await db.collection("sessoes").findOne({ token });
+
+        if(!sessao) {
+            return res.sendStatus(401);
+        }
+
+        const transacoes = await db.collection("transacoes").find({ userId: new ObjectId(sessao.userId)}).toArray();
+        res.send(transacoes);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+});
+
 app.listen(5000, () => console.log("Servidor rodando!"));
 
