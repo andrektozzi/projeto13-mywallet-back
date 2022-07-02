@@ -1,4 +1,4 @@
-import { db, objectId, ObjectId } from "../db/mongo.js";
+import { db, objectId } from "../db/mongo.js";
 import dayjs from "dayjs";
 
 export async function AddIncome(req, res) {
