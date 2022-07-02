@@ -14,4 +14,3 @@ app.use(authRouter);
 app.use(transactionsRouter);
 
 app.listen(process.env.PORT, () => console.log("Servidor rodando!"));
-
